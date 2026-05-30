@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: Evolufer
+      POSTGRES_PASSWORD: Evolufer
+      POSTGRES_DB: EvoluferDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U Evolufer -d EvoluferDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./ERP_Evolufer_API
+      dockerfile: ERP_Evolufer_API/Dockerfile
+    container_name: evolufer_api
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=EvoluferDB;Username=Evolufer;Password=Evolufer
+    ports:
+      - "5271:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./ERP_Evolufer_Frontend/ERP_Evolufer_Frontend
+      dockerfile: Dockerfile
+    container_name: evolufer_frontend
+    restart: always
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

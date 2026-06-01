@@ -27,6 +27,12 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=EvoluferDB;Username=Evolufer;Password=Evolufer
+      Jwt__Key: EvoluferDockerJwtKey-ChangeMe-AtLeast32Characters
+      Jwt__Issuer: ERP_Evolufer_API
+      Jwt__Audience: ERP_Evolufer_Frontend
+      Jwt__ExpirationMinutes: 120
+      SeedAdmin__Email: admin@evolufer.local
+      SeedAdmin__Password: Admin@123456
     ports:
       - "5271:8080"
     depends_on:
